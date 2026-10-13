@@ -84,9 +84,9 @@ The script removes entirely empty trailing columns during preparation. Preserve 
 
 | File | Description |
 | --- | --- |
-| [`project.R`](project.R) | Data preparation, visualizations, inference, regression models, and diagnostics. |
-| [`Urmia_Master_Dataset_1984_2025.csv`](Urmia_Master_Dataset_1984_2025.csv) | Annual input dataset. |
-| [Persian project report](<Untitled 1.pdf>) | Written discussion of the methodology and findings. |
+| [project.R](project.R) | Data preparation, visualizations, inference, regression models, and diagnostics. |
+| [Urmia_Master_Dataset_1984_2025.csv](Urmia_Master_Dataset_1984_2025.csv) | Annual input dataset. |
+| [Persian project report](<report.pdf>) | Written discussion of the methodology and findings. |
 | `README.md` | Project overview and execution instructions. |
 | `.gitignore` | Exclusions for local R session and editor files. |
 
