@@ -1,141 +1,152 @@
 # Lake Urmia Statistical Analysis
 
-An R-based statistical analysis of Lake Urmia's surface area and water level, examining their associations with agricultural, climatic, hydrological, and population variables.
+**Exploratory analysis, statistical inference, and regression modeling of annual lake and environmental data using R.**
 
-Developed by **Mehrshad Haghighat** for the **Statistics and Applications** course at Sharif University of Technology.
+This project examines how Lake Urmia's surface area and water level vary alongside agricultural activity, climate, water infrastructure, and population. It brings together a structured data-analysis workflow, interpretable linear models, and regression diagnostics to investigate relationships within an annual dataset spanning **1984–2025**.
 
-## Overview
+Developed by **Mehrshad Haghighat** for the **Statistics and Applications** course at **Sharif University of Technology**.
 
-The project combines data preparation, exploratory data analysis, statistical inference, and regression modeling using **42 annual observations covering 1984–2025**. The main analysis subset contains **33 complete observations for 1992–2024**, after filtering for available agricultural-area and water-level measurements.
+## Analytical Objectives
 
-The analysis considers two response variables:
+The analysis addresses three questions:
 
-- **Lake_Area:** lake surface area.
-- **water_level:** lake water level.
+- How do the distributions of lake area and water level differ between earlier and later observation periods?
+- How are these lake indicators associated with agricultural, climatic, hydrological, and population variables?
+- How do predictor selection, standardized coefficients, and diagnostic tests inform the interpretation of regression models?
 
-The explanatory variables are agricultural area, rainfall, temperature, soil moisture, dam capacity, and population.
+## Methods
 
-## Analysis Workflow
+### Data Preparation and Exploratory Analysis
 
-| Stage | Implementation |
+The workflow removes entirely missing columns, summarizes missing observations, and constructs analysis subsets based on measurement availability. Descriptive statistics include the mean, median, standard deviation, minimum, and maximum.
+
+Visual exploration combines histograms, boxplots, predictor–response scatterplots, and fitted linear trends. Potential outliers are examined using boxplot criteria and a separate mean ± three-standard-deviations rule.
+
+### Statistical Inference
+
+The script estimates **95% t-based confidence intervals** for mean lake area and mean water level. **Welch's two-sample t-test** compares an early period (`Year <= 1999`) with a late period (`Year > 1999`) without imposing equal group variances.
+
+### Regression Modeling
+
+Two responses are modeled separately: **lake surface area** and **water level**.
+
+| Component | Approach |
 | --- | --- |
-| Data preparation | Remove entirely missing columns, inspect missing values, and create subsets with available agricultural-area and water-level observations. |
-| Period comparison | Define an early period (`Year <= 1999`) and a late period (`Year > 1999`). |
-| Outlier inspection | Use boxplots and flag observations outside the mean plus or minus three standard deviations. |
-| Exploratory analysis | Calculate descriptive statistics and visualize distributions, period differences, and predictor–response relationships. |
-| Statistical inference | Calculate 95% t-based confidence intervals for mean lake area and water level; compare periods with Welch's two-sample t-tests. |
-| Correlation analysis | Calculate Pearson correlations using complete observations. |
-| Simple regression | Fit population-based linear models for lake area and water level. The predictor is explicitly selected in the script. |
-| Multiple regression | Fit separate models using all six explanatory variables for each response. |
-| Model selection | Apply bidirectional stepwise selection using AIC through `MASS::stepAIC()`. |
-| Diagnostics | Inspect standard regression plots, Shapiro–Wilk residual normality tests, non-constant variance tests through `car::ncvTest()`, and variance inflation factors. |
-| Coefficient comparison | Standardize variables and compare coefficients from the full six-predictor models in a combined table. |
+| Correlation analysis | Pearson correlation matrix calculated from complete observations. |
+| Simple regression | Population-based linear models for each lake indicator. |
+| Multiple regression | Six-predictor models combining agricultural area, rainfall, temperature, soil moisture, dam capacity, and population. |
+| Model selection | Bidirectional stepwise selection using Akaike Information Criterion (AIC). |
+| Model comparison | Adjusted R² summaries and standardized coefficient comparisons. |
 
-## Repository Files
+Stepwise selection is implemented with `MASS::stepAIC()`. The standardized-coefficient comparison is based on the **full six-predictor models**, allowing the relative associations of predictors to be examined on a common scale.
 
-| File | Purpose |
+### Regression Diagnostics
+
+Model assessment includes:
+
+- Residual-versus-fitted, normal Q–Q, scale–location, and residual-versus-leverage plots.
+- **Shapiro–Wilk tests** for residual normality.
+- **Non-constant variance score tests** using `car::ncvTest()`.
+- **Variance inflation factors (VIF)** to examine multicollinearity.
+
+## Dataset
+
+The repository includes [Urmia_Master_Dataset_1984_2025.csv](Urmia_Master_Dataset_1984_2025.csv), containing **42 annual observations** and nine named variables.
+
+| Variable | Analytical role | Description |
+| --- | --- | --- |
+| `Year` | Time index | Observation year. |
+| `water_level` | Response | Lake water level, labeled in meters in the analysis. |
+| `Lake_Area` | Response | Lake surface area, labeled in square meters in the analysis. |
+| `Agri_Area` | Predictor | Agricultural area. |
+| `Rainfall` | Predictor | Rainfall measure. |
+| `Temperature` | Predictor | Temperature measure. |
+| `Soil_Moisture` | Predictor | Soil-moisture measure. |
+| `Dam_Capacity` | Predictor | Dam-capacity measure. |
+| `Population` | Predictor | Population measure. |
+
+### Observation Coverage
+
+Missing values are represented as `NA`.
+
+| Coverage | Observations |
 | --- | --- |
-| `project.R` | Main analysis script. |
-| `Urmia_Master_Dataset_1984_2025.csv` | Input dataset: 42 annual observations covering 1984–2025. |
-| `Untitled 1.pdf` | Persian course report describing the methodology and findings. |
-| `README.md` | Project description and setup instructions. |
-| `.gitignore` | Excludes local R session files and editor state. |
+| Full dataset: 1984–2025 | 42 |
+| Main analysis subset: 1992–2024 | 33 |
+| Early group within the main subset: 1992–1999 | 8 |
+| Late group within the main subset: 2000–2024 | 25 |
 
-Read the [Persian report](<Untitled 1.pdf>) for the original discussion of the analysis.
+Water-level measurements are unavailable for **1984–1991**, and agricultural-area data are unavailable for **2025**. The main analysis subset retains years with both measurements present. The remaining named variables have no missing values in the included CSV.
 
-## Requirements
+The script removes entirely empty trailing columns during preparation. Preserve the original named-column order: some transformations use contiguous column selections. Units and source attribution for the predictor variables should be interpreted using the underlying dataset documentation.
 
-- R, with an optional IDE such as RStudio.
-- R packages: `tidyverse`, `ggplot2`, `readr`, `MASS`, `car`, and `corrplot`.
-- The included input dataset, `Urmia_Master_Dataset_1984_2025.csv`.
+## Project Files
 
-Install the packages in R:
+| File | Description |
+| --- | --- |
+| [`project.R`](project.R) | Data preparation, visualizations, inference, regression models, and diagnostics. |
+| [`Urmia_Master_Dataset_1984_2025.csv`](Urmia_Master_Dataset_1984_2025.csv) | Annual input dataset. |
+| [Persian project report](<Untitled 1.pdf>) | Written discussion of the methodology and findings. |
+| `README.md` | Project overview and execution instructions. |
+| `.gitignore` | Exclusions for local R session and editor files. |
+
+## Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/MehrshadHaghighat007/statistics_project.git
+cd statistics_project
+```
+
+### 2. Install Dependencies
+
+Install R and, optionally, RStudio. In an R session, install the packages loaded by the script:
 
 ```r
 install.packages(c("tidyverse", "ggplot2", "readr", "MASS", "car", "corrplot"))
 ```
 
-`ggplot2` and `readr` are included in the tidyverse, but are also loaded explicitly by the script. `corrplot` is loaded; the current script prints the correlation matrix rather than calling its plotting function.
+The workflow uses `dplyr` and `tidyr` for transformations, `ggplot2` for visualization, `readr` for CSV ingestion, `MASS` for AIC selection, and `car` for regression diagnostics. Base R provides the inference and linear-model functions. `corrplot` is loaded by the script but is not called in the current analysis.
 
-## Dataset
+### 3. Configure Data Loading
 
-The input data is included as [Urmia_Master_Dataset_1984_2025.csv](Urmia_Master_Dataset_1984_2025.csv), alongside `project.R` in the repository root.
-
-The CSV contains nine named analysis columns. Missing observations are encoded as `NA`. It also contains 13 unnamed, entirely empty trailing columns, which the script removes using `dplyr::select(where(~ !all(is.na(.))))`.
-
-The script references these columns:
-
-| Column | Description |
-| --- | --- |
-| `Year` | Observation year. |
-| `Lake_Area` | Lake surface area, labeled in square meters in the script. |
-| `water_level` | Lake water level, labeled in meters in the script. |
-| `Agri_Area` | Agricultural area. |
-| `Rainfall` | Rainfall measure. |
-| `Temperature` | Temperature measure. |
-| `Soil_Moisture` | Soil-moisture measure. |
-| `Dam_Capacity` | Dam-capacity measure. |
-| `Population` | Population measure. |
-
-### Coverage and Missing Values
-
-| Field / subset | Coverage |
-| --- | --- |
-| Full dataset | 42 annual observations, 1984–2025. |
-| `water_level` | Missing for 1984–1991: eight observations. |
-| `Agri_Area` | Missing for 2025: one observation. |
-| Other named columns | No missing observations in the supplied CSV. |
-| Main analysis subset (`lake_contribute`) | 33 observations, 1992–2024, with both `Agri_Area` and `water_level` available. |
-| Early group in the main subset | Eight observations, 1992–1999. |
-| Late group in the main subset | 25 observations, 2000–2024. |
-
-Keep the numeric fields numeric and preserve `NA` for missing observations. Some selections in the script use contiguous column ranges (`water_level:Population` and `Agri_Area:Population`), so the input column order also matters.
-
-The CSV does not contain source references or a units dictionary. The lake-area and water-level units above follow the labels in the analysis script; units for the other measures should be taken from the original data documentation.
-
-## Running the Analysis
-
-The original script uses an absolute path on the author's computer:
+Keep the CSV beside `project.R` and ensure the script's data-loading statement uses this repository-relative path:
 
 ```r
-lake <- read_csv("/home/mehrshad/Downloads/Urmia_Master_Dataset_1984_2025.csv")
+lake <- read_csv("Urmia_Master_Dataset_1984_2025.csv")
 ```
 
-For a portable checkout:
+Run the analysis with the repository root as the working directory.
 
-1. Keep `Urmia_Master_Dataset_1984_2025.csv` in the repository root, alongside `project.R`.
-2. Replace the line above in `project.R` with:
+### 4. Execute the Analysis
 
-   ```r
-   lake <- read_csv("Urmia_Master_Dataset_1984_2025.csv")
-   ```
+For interactive exploration in R or RStudio:
 
-3. Set the working directory to the repository root and run:
+```r
+source("project.R")
+```
 
-   ```r
-   source("project.R")
-   ```
-
-Alternatively, after installing dependencies and updating the path, run from the repository root:
+Alternatively, from a terminal:
 
 ```bash
 Rscript project.R
 ```
 
-In an interactive R session, plots are shown through the active graphics device. In a typical non-interactive `Rscript` session, the default PDF device may create `Rplots.pdf`. The script does not explicitly export a named set of figures or a generated report.
+## Analysis Outputs
 
-## Interpretation and Scope
+Execution produces descriptive summaries, confidence intervals, hypothesis-test results, correlation matrices, regression summaries, AIC-selected models, diagnostic-test results, and a combined standardized-coefficient table.
 
-This is an exploratory statistical course project, rather than a forecasting or causal-inference system.
+In an interactive session, visualizations appear through the active graphics device. A non-interactive run may write graphics to the default `Rplots.pdf` device. The Persian report provides the accompanying narrative; it is a separate document rather than an automatically generated output of the script.
 
-- Regression coefficients and correlations describe associations; they do not establish that a predictor causes lake decline.
-- Annual observations may share trends and serial dependence. The script does not explicitly model or test temporal dependence.
-- Stepwise AIC selection compares candidate models fitted to the available data; it does not establish performance on unseen observations. The script does not implement a held-out test set or cross-validation.
-- Missing values, multicollinearity, and model assumptions affect interpretation. The script includes several regression diagnostics, but their inclusion alone does not guarantee that assumptions are satisfied.
-- The final standardized-coefficient comparison uses the full models, rather than the models selected by stepwise AIC.
+## Statistical Interpretation
 
-The dataset coverage and missing-value counts above were checked directly against the supplied CSV. The numerical model results discussed in the report have not been independently rerun as part of this documentation update.
+The project investigates **associations in observational data**. Correlations, regression coefficients, and standardized effects should not be interpreted as evidence of causation.
 
-## R Session Files
+Shared temporal trends, serial dependence, multicollinearity, and missing-data selection can affect interpretation. The implementation includes regression diagnostics but does not explicitly model temporal dependence. AIC selection compares fitted candidate models; it does not measure forecasting accuracy or performance on a held-out dataset.
 
-`.Rhistory`, `.RData`, and `.Rproj.user/` are not required to reproduce the project and should normally remain outside version control. Necessary analysis steps belong in `project.R`, with dependencies and input-data instructions documented here.
+## Author
+
+**Mehrshad Haghighat**  
+Computer Science, Sharif University of Technology  
+[GitHub](https://github.com/MehrshadHaghighat007)
