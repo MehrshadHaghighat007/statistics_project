@@ -40,7 +40,7 @@ The explanatory variables are agricultural area, rainfall, temperature, soil moi
 | `README.md` | Project description and setup instructions. |
 | `.gitignore` | Excludes local R session files and editor state. |
 
-Read the [Persian report](<Untitled 1.pdf>) for the original discussion of the analysis.
+Read the [Persian report](<report.pdf>) for the original discussion of the analysis.
 
 ## Requirements
 
